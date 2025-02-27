@@ -135,7 +135,7 @@ function getResponseStream(inputStream) {
  * @VisibleForTesting
  */
 function aggregateResponses(responses) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const lastResponse = responses[responses.length - 1];
     if (lastResponse === undefined) {
         throw new errors_1.GoogleGenerativeAIError('Error aggregating stream chunks because the final response in stream chunk is undefined');
@@ -203,6 +203,13 @@ function aggregateResponses(responses) {
                     groundingMetadataAggregated;
             }
         }
+    }
+    if ((_d = aggregatedResponse.candidates) === null || _d === void 0 ? void 0 : _d.length) {
+        aggregatedResponse.candidates.forEach((candidate) => {
+            if (candidate.content.parts.length > 1 && candidate.content.parts[0].text === '') {
+                candidate.content.parts.shift(); // remove empty text parameter
+            }
+        });
     }
     return aggregatedResponse;
 }
